@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using System.Diagnostics;
+using UnityEngine.SceneManagement;
 public class ScreenTestController : MonoBehaviour
 {
     public GameObject[] panelList;
     public PillarBoxCanvas PillarBox;
     public int Score = 0;
     private AudioSource mySound;
+    private Stopwatch watch;
+    public GameObject successPanel;
+    public GameObject failPanel;
+    public float resultTime = 0.2f;
     private void Awake()
     {
         mySound = GetComponent<AudioSource>();
@@ -20,6 +25,18 @@ public class ScreenTestController : MonoBehaviour
     public void Exit()
     {
         Exit();
+    }
+    IEnumerator Success()
+    {
+        successPanel.SetActive(true);
+        yield return new WaitForSeconds(resultTime);
+        successPanel.SetActive(false);
+    }
+    IEnumerator Fail()
+    {
+        failPanel.SetActive(true);
+        yield return new WaitForSeconds(resultTime);
+        failPanel.SetActive(false);
     }
     #region 생년월일  
     [Header("Birth")]
@@ -72,7 +89,7 @@ public class ScreenTestController : MonoBehaviour
     #region 오늘의 날짜  
     [Header("Today")]
     public int todayYear, todayMonth, todayDate, todayDay;
-    public TextMeshProUGUI todayTMP_Y, todayTMP_M, todayTMP_Date, todayTMP_Day;    
+    public TextMeshProUGUI todayTMP_Y, todayTMP_M, todayTMP_Date, todayTMP_Day;
     public void StartTodayPanel()
     {
         TodayReset();
@@ -124,7 +141,7 @@ public class ScreenTestController : MonoBehaviour
             todayDay = 0;
         if (todayDay < 0)
             todayDay = 6;
-        
+
         if (SystemLanguage.Korean != Application.systemLanguage)
         {
             switch (todayDay)
@@ -179,8 +196,8 @@ public class ScreenTestController : MonoBehaviour
                     break;
             }
         }
-        
-        
+
+
 
     }
     public void DateCheck()
@@ -194,7 +211,7 @@ public class ScreenTestController : MonoBehaviour
             Score++;
         //print(tempMonth);
         string tempDate = System.DateTime.Now.ToString("dd");
-        if (int.Parse(tempDate) == int.Parse(todayTMP_Date.text))            
+        if (int.Parse(tempDate) == int.Parse(todayTMP_Date.text))
             Score++;
         //print(tempDate);
         int currentDay = 0;
@@ -227,7 +244,7 @@ public class ScreenTestController : MonoBehaviour
         }
         if (currentDay == todayDay)
             Score++;
-        print(currentDay);
+        //print(currentDay);
         StartStuffPanel();
     }
     #endregion
@@ -355,6 +372,7 @@ public class ScreenTestController : MonoBehaviour
     }
 
     #endregion
+
     #region 계산
     [Header("Calc")]
     public TextMeshProUGUI calc1_1, calc1_2, calc1_answer;
@@ -483,6 +501,7 @@ public class ScreenTestController : MonoBehaviour
         CubeStart();
     }
     #endregion
+
     #region 큐브
     [Header("Cube")]
     public Transform[] cubeButton;
@@ -514,14 +533,21 @@ public class ScreenTestController : MonoBehaviour
         {
             for (int i = 0; i < 5; ++i)
                 cubeButton[j].GetChild(i).gameObject.SetActive(false);
-            if (num != -1)                
+            if (num != -1)
                 cubeButton[j].GetChild(num).gameObject.SetActive(true);
         }
     }
     public void CubeNextBtn()
     {
         if (cubeBtnSelect == cubeOrder[cubeQuestionCnt])
+        {
             Score++;
+            StartCoroutine(Success());
+        }
+        else
+        {
+            StartCoroutine(Fail());
+        }
         cubeQuestionCnt++;
         cubeBtnSelect = -1;
         CubeSelectCube(-1);
@@ -539,6 +565,7 @@ public class ScreenTestController : MonoBehaviour
     }
 
     #endregion
+
     #region 도형
     [Header("Shape1")]
     public GameObject shape1Question;
@@ -571,9 +598,14 @@ public class ScreenTestController : MonoBehaviour
     public void Shape1NextLevel()
     {
         if (shape1Order[shape1QuestNum] == shape1SelectNum)
+        {
+            StartCoroutine(Success());            
             Score++;
+        }
+        else            
+            StartCoroutine(Fail());
         shape1QuestNum++;
-        if (shape1QuestNum == 3)
+        if (shape1QuestNum == 2)
             Shape2Start();
         Shape1SelectBtn(-1);
     }
@@ -583,7 +615,7 @@ public class ScreenTestController : MonoBehaviour
         for (int i = 0; i < 6; ++i)
         {
             for (int j = 0; j < 6; ++j)
-                shape1Select.GetChild(j).gameObject.SetActive(false);            
+                shape1Select.GetChild(j).gameObject.SetActive(false);
         }
         if (num < 0)
             return;
@@ -591,6 +623,7 @@ public class ScreenTestController : MonoBehaviour
             shape1Select.GetChild(num).gameObject.SetActive(true);
     }
     #endregion
+
     #region 도형2
     [Header("Shape2")]
     public GameObject shape2Question;
@@ -617,15 +650,22 @@ public class ScreenTestController : MonoBehaviour
     }
     public void Shape2SoundPlay()
     {
-        mySound.clip = shape1Audio[shape1Order[shape2QuestNum]];
+        mySound.clip = shape2Audio[shape2Order[shape2QuestNum]];
         mySound.Play();
     }
     public void Shape2NextLevel()
     {
         if (shape2Order[shape2QuestNum] == shape2SelectNum)
+        {
             Score++;
+            StartCoroutine(Success());            
+        }
+        else
+        {            
+            StartCoroutine(Fail());
+        }
         shape2QuestNum++;
-        if (shape2QuestNum == 3)
+        if (shape2QuestNum == 2)
             SentenceStart();
         Shape2SelectBtn(-1);
     }
@@ -643,6 +683,7 @@ public class ScreenTestController : MonoBehaviour
             shape2Select.GetChild(num).gameObject.SetActive(true);
     }
     #endregion
+
     #region 문장
     [Header("Sentence")]
     public Transform[] sentenceQuestion;
@@ -661,7 +702,7 @@ public class ScreenTestController : MonoBehaviour
         sentenceOrder = new List<int>();
         for (int i = 0; i < 3; ++i)
         {
-            sentenceOrder.Add(Random.Range(0,6));
+            sentenceOrder.Add(Random.Range(0, 6));
         }
         sentenceAnswer = 0;
         sentenceNum = 0;
@@ -670,7 +711,7 @@ public class ScreenTestController : MonoBehaviour
     }
     public void SentenceQuestOn()
     {
-        for(int i = 0; i< sentenceQuestion.Length;++i)
+        for (int i = 0; i < sentenceQuestion.Length; ++i)
         {
             sentenceQuestion[i].parent.gameObject.SetActive(false);
             for (int j = 0; j < 6; ++j)
@@ -686,7 +727,7 @@ public class ScreenTestController : MonoBehaviour
             sentenceAnswer = 5;
         if (sentenceAnswer > 5)
             sentenceAnswer = 0;
-        for(int i = 0; i< sentenceSelect.Length;++i)
+        for (int i = 0; i < sentenceSelect.Length; ++i)
         {
             for (int j = 0; j < 6; ++j)
                 sentenceSelect[i].GetChild(j).gameObject.SetActive(false);
@@ -697,7 +738,14 @@ public class ScreenTestController : MonoBehaviour
     public void SentenceNextLevel()
     {
         if (sentenceAnswer == sentenceOrder[sentenceNum])
+        {
             Score++;
+            StartCoroutine(Success());
+        }
+        else
+        {
+            StartCoroutine(Fail());
+        }
         sentenceNum++;
         if (sentenceNum >= 3)
         {
@@ -710,6 +758,7 @@ public class ScreenTestController : MonoBehaviour
     }
 
     #endregion
+
     #region 패턴
     [Header("Pattern")]
     public GameObject[] patternPanel;
@@ -718,7 +767,7 @@ public class ScreenTestController : MonoBehaviour
     public Transform patternColor;
     private int patternNum = 20;
     private List<int> patternOrder;
-    private int patternLevel= 0;
+    private int patternLevel = 0;
 
     public void PatternStart()
     {
@@ -755,11 +804,11 @@ public class ScreenTestController : MonoBehaviour
         for (int i = 0; i < patternText.Length; ++i)
             patternText[i].text = patternNum.ToString();
     }
-    public void PatternMoveColor (int num)
+    public void PatternMoveColor(int num)
     {
         patternNum += num;
         if (patternNum < 0)
-            patternNum =  8;
+            patternNum = 8;
         if (patternNum > 8)
             patternNum = 0;
         for (int i = 0; i < patternColor.childCount; ++i)
@@ -848,7 +897,8 @@ public class ScreenTestController : MonoBehaviour
         patternLevel++;
         if (patternLevel == 3)
         {
-            print("Next");
+            StroopInit();
+            StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[10], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
             return;
         }
 
@@ -874,7 +924,484 @@ public class ScreenTestController : MonoBehaviour
     }
 
     #endregion
+
+    #region 스트룹 검사
+    [Header("Stroop")]
+    public GameObject stroopFisrtPanel;
+    public GameObject stroopPanel;
+    public GameObject stroopResultPanel;
+    public TextMeshProUGUI stroopResultText;
+    private string[] stroopWord = new string[]{
+        "빨간색",
+        "파란색",
+        "검정색",
+        "초록색"
+    };
+    private Color[] stroopColor = new Color[]{
+        Color.red,
+        Color.blue,
+        Color.black,
+        Color.green
+    };
+
+    private List<int> stroopWroongOrder1;
+    private List<int> stroopWroongOrder2;
+    private List<int> stroopOrder;
+    public TextMeshProUGUI stroopText;
+    public Button stroopButtonL;
+    public Button stroopButtonR;
+    public GameObject stroopSelectL;
+    public GameObject stroopSelectR;
+    private int stroopSelect = 0;
+    public int stroopScore = 0;
+    public float stroopTime;
+    public void StroopInit()
+    {
+        StroopReset();
+    }
+    public void StroopReset()
+    {
+        stroopScore = 0;
+        stroopFisrtPanel.SetActive(true);
+        stroopPanel.SetActive(false);
+        stroopResultPanel.SetActive(false);
+        StroopButton(0);
+        stroopOrder = new List<int>();
+        stroopWroongOrder1 = new List<int>();
+        stroopWroongOrder2 = new List<int>();
+        for (int i = 0; i < 20; ++i)
+        {
+            stroopOrder.Add(Random.Range(0, 4));
+        }
+        for (int i = 0; i < 10; ++i)
+        {
+            stroopWroongOrder1.Add(i);
+            stroopWroongOrder2.Add(i + 10);
+        }
+        Util.ShuffleList(stroopWroongOrder1);
+        Util.ShuffleList(stroopWroongOrder2);
+        stroopOrder[stroopWroongOrder1[0]] = 4;
+        stroopOrder[stroopWroongOrder1[1]] = 4;
+        stroopOrder[stroopWroongOrder2[0]] = 4;
+        stroopOrder[stroopWroongOrder2[1]] = 4;
+        stroopOrder[stroopWroongOrder2[2]] = 4;
+        stroopOrder[stroopWroongOrder2[3]] = 4;
+
+        watch = new Stopwatch();
+    }
+    public void StroopButton(int num)
+    {
+        stroopSelectL.gameObject.SetActive(false);
+        stroopSelectR.gameObject.SetActive(false);
+        stroopSelect = num;
+        if (num == 0)
+            return;
+        if (num == 1)
+            stroopSelectL.gameObject.SetActive(true);
+        else
+            stroopSelectR.gameObject.SetActive(true);
+    }
+    public void StroopGameStart()
+    {
+        //StroopReset();
+        watch.Start();
+        stroopPanel.SetActive(true);
+        StartCoroutine(StroopGame());
+
+        IEnumerator StroopGame()
+        {
+            WaitForSeconds clickBlock = new WaitForSeconds(resultTime);
+            successPanel.SetActive(false);
+            failPanel.SetActive(false);
+            stroopButtonL.interactable = false;
+            stroopButtonR.interactable = false;
+
+            for (int cnt = 0; cnt < 20; ++cnt)
+            {
+                StroopButton(0);
+                if (stroopOrder[cnt] != 4)
+                {
+                    stroopText.text = stroopWord[stroopOrder[cnt]];
+                    stroopText.color = stroopColor[stroopOrder[cnt]];
+                }
+                else
+                {
+                    int tempNum1;
+                    int tempNum2;
+                    while (true)
+                    {
+                        tempNum1 = Random.Range(0, 4);
+                        tempNum2 = Random.Range(0, 4);
+                        if (tempNum1 != tempNum2)
+                        {
+                            stroopText.text = stroopWord[tempNum1];
+                            stroopText.color = stroopColor[tempNum2];
+                            break;
+                        }
+                    }
+
+                }
+                yield return clickBlock;
+                stroopButtonL.interactable = true;
+                stroopButtonR.interactable = true;
+                for (int i = 0; i < 44 - cnt; ++i)
+                {
+                    if (stroopSelect != 0)
+                        break;
+                    yield return new WaitForSeconds(0.05f);
+                }
+                stroopButtonL.interactable = false;
+                stroopButtonR.interactable = false;
+
+                if (stroopOrder[cnt] == 4)
+                {
+                    if (2 == stroopSelect)
+                    {
+                        stroopScore++;
+                        StartCoroutine(Success());
+                    }
+                    else
+                        StartCoroutine(Fail());
+                }
+                else
+                {
+                    if (1 == stroopSelect)
+                    {
+                        stroopScore++;
+                        StartCoroutine(Success());
+                    }
+                    else
+                        StartCoroutine(Fail());
+                }
+            }
+            watch.Stop();
+            stroopTime = watch.ElapsedMilliseconds;
+            stroopTime = stroopTime / 1000;
+            stroopResultPanel.SetActive(true);
+            stroopResultText.text = stroopScore.ToString() +" / 20";
+        }
+    }
+    public void StroopEnd()
+    {
+        WitInit();
+    }
+    #endregion
+
+    #region 순발력
+    [Header("Wit")]
+    public GameObject witStartPanel;
+    public GameObject witGamePanel;
+    public RectTransform witBall;
+    public Image witButton;
+    public GameObject witNextBtn;
+    private Vector3 witOriPos;
+    private int witCnt = 0;
+    public bool witBallMove = false;
+    private float[] witTime = new float[]{
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f
+    };
+
+    public void WitInit()
+    {
+        witStartPanel.SetActive(true);
+        witGamePanel.SetActive(false);
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[11], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+    }
+    public void WitStart()
+    {
+        witReset();
+        witButton.raycastTarget = false;
+        witGamePanel.SetActive(true);
+        WitBallReset();
+        WitBallMove();
+    }
+    public void witReset()
+    {
+        witBallMove = false;
+        witCnt = 0;
+        witNextBtn.SetActive(false);
+    }
+    public void WitBallReset()
+    {
+        witButton.raycastTarget = false;
+        witBall.GetComponent<Image>().color = Color.black;
+        watch = new Stopwatch();
+        witOriPos = new Vector3(0, -100, 0);
+        witBall.localPosition = witOriPos;
+        watch.Start();
+    }
+    public void WitBallMove()
+    {
+        witBallMove = true;
+        StartCoroutine(WitBallMove());
+        StartCoroutine(WitColorChange());
+        IEnumerator WitBallMove()//-650,650,150,-350
+        {
+            WaitForSeconds witTime = new WaitForSeconds(0.02f);
+            int tempWitTime = Random.Range(10, 40);
+            Vector3 randomPos = new Vector3(Random.Range(-650, 650), Random.Range(-350, 150), 0);
+            Vector3 tempDir = (randomPos - witOriPos) / tempWitTime;
+            int cnt = 0;
+            while (witBallMove)
+            {
+                witBall.transform.localPosition += tempDir;
+                yield return witTime;
+                cnt++;
+                if (cnt == tempWitTime)
+                {
+                    tempWitTime = Random.Range(10, 40);
+                    randomPos = new Vector3(Random.Range(-650, 650), Random.Range(-350, 150), 0);
+                    tempDir = (randomPos - witBall.transform.localPosition) / tempWitTime;
+                    cnt = 0;
+                }
+            }
+        }
+        IEnumerator WitColorChange()
+        {
+            int tempWitTime = Random.Range(15, 30);
+            int cnt = 0;
+            WaitForSeconds witTime = new WaitForSeconds(0.2f);
+            while (witBallMove)
+            {
+                yield return witTime;
+                cnt++;
+                if (cnt == tempWitTime)
+                {
+                    if (witCnt == 0)
+                        witBall.GetComponent<Image>().color = Color.red;
+                    if (witCnt == 1)
+                        witBall.GetComponent<Image>().color = Color.blue;
+                    if (witCnt == 2)
+                        witBall.GetComponent<Image>().color = Color.green;
+                    if (witCnt == 3)
+                        witBall.GetComponent<Image>().color = Color.red;
+
+                    witButton.raycastTarget = true;
+                    break;
+                }
+            }
+        }
+    }
+    public void WitBallClick()
+    {
+        witBallMove = false;
+        watch.Stop();
+        witTime[witCnt] = watch.ElapsedMilliseconds;
+        witCnt++;
+        witNextBtn.SetActive(true);
+    }
+    public void WitNextLevel()
+    {
+        if (witCnt > 3)
+        {
+            JyroInit();
+            return;
+        }
+        WitBallReset();
+        WitBallMove();
+        witNextBtn.SetActive(false);
+    }
+
+    #endregion
+
+    #region 자이로센서
+
+    [Header("JyroSensor")]
+    public GameObject jyroStartPanel;
+    public GameObject jyroGamePanel;
+    public GameObject jyroHolder;
+    public GameObject[] jyroGround;
+    public JyroBall jyroBall;
+    private int jyroCnt = 0;
+    private bool jyroDoubleCheck = false;
+    private float[] jyroTime = new float[]{
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f
+    };
+    public void JyroInit()
+    {
+        jyroStartPanel.SetActive(true);
+        jyroGamePanel.SetActive(false);
+        JyroHolderOn(true);
+        jyroBall.isPlaying = false;
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[12], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+    }
+    public void JyroReset()
+    {
+        jyroBall.isPlaying = false;
+        jyroBall.ResetPos();
+        JyroHolderOn(true);
+    }
+    public void JyroStart()
+    {
+        jyroBall.isPlaying = true;
+        jyroBall.ResetPos();
+        jyroGamePanel.SetActive(true);
+        for (int i = 0; i < 5; ++i)
+            jyroGround[i].SetActive(false);
+        jyroGround[jyroCnt].SetActive(true);
+    }
+    public void JyroHolderOn(bool check)
+    {
+        jyroHolder.SetActive(check);
+        if (!check)
+            jyroDoubleCheck = false;
+    }
+    public void JyroGameStart()
+    {
+        watch = new Stopwatch();
+        watch.Start();
+        JyroHolderOn(false);
+    }
+    public void JyroEnd()
+    {
+        if (jyroDoubleCheck)
+            return;
+        watch.Stop();
+        jyroTime[jyroCnt] = watch.ElapsedMilliseconds;
+        JyroReset();
+        jyroCnt++;
+        if (jyroCnt > 4)
+        {
+            jyroStartPanel.SetActive(false);
+            jyroGamePanel.SetActive(false);
+            PianoStart();
+            return;
+        }
+            
+        JyroStart();
+        jyroDoubleCheck = true;
+    }
+    #endregion
+
+    #region 피아노
+    [Header("Piano")]
+    public AudioClip[] pianoSound;
+    private List<int> pianoOrder;
+    private List<int> pianoUpdown;
+    private int pianoCnt = 0;
+    private int pianoScore = 0;
+    public int pianoSelect = 3; //0 낮은음 1같은음 2높은음
+    public GameObject[] pianoSelectImage;
+    public GameObject pianoResult;
+    public TextMeshProUGUI pianoResultText;
+    public void PianoStart()
+    {
+        PianoReset();
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[13], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+    }
+    public void PianoReset()
+    {
+        pianoResult.SetActive(false);
+        pianoCnt = 0;
+        pianoScore = 0;
+        PianoSelect(3);
+        pianoOrder = new List<int>();
+        pianoUpdown = new List<int>();
+        for (int i = 0; i < 7; ++i)
+        {
+            pianoOrder.Add(Random.Range(1, 7));
+            pianoUpdown.Add(Random.Range(0, 3));
+        }
+        Util.ShuffleList(pianoOrder);
+        Util.ShuffleList(pianoUpdown);
+    }
+    public void PianoSelect(int num)
+    {
+        pianoSelect = num;
+        for (int i = 0; i < pianoSelectImage.Length; ++i)
+            pianoSelectImage[i].SetActive(false);
+        if (num > 2)
+            return;
+        pianoSelectImage[num].SetActive(true);
+    }
+    public void PianoPlayFirst()
+    {
+        mySound.clip = pianoSound[pianoOrder[pianoCnt]];
+        mySound.volume = 0.7f;
+        mySound.Play();
+    }
+    public void PianoPlayQuest()
+    {
+        if(pianoUpdown[pianoCnt] == 0)
+            mySound.clip = pianoSound[pianoOrder[pianoCnt]-1];
+        if (pianoUpdown[pianoCnt] == 1)
+            mySound.clip = pianoSound[pianoOrder[pianoCnt]];
+        if (pianoUpdown[pianoCnt] == 2)
+            mySound.clip = pianoSound[pianoOrder[pianoCnt] + 1];
+        mySound.volume = 0.7f;
+        mySound.Play();
+    }
+    public void PianoCheck()
+    {
+        if (pianoUpdown[pianoCnt] == pianoSelect)
+        {
+            StartCoroutine(Success());
+            pianoScore++;
+        }
+        else
+            StartCoroutine(Fail());
+
+        pianoCnt++;
+        PianoSelect(3);
+
+        if (pianoCnt > 6)
+        {
+            pianoResult.SetActive(true);
+            pianoResultText.text = pianoScore.ToString() +" / "+pianoCnt.ToString();
+        }
+    }
+    #endregion
+
+    #region 결과
+    [Header("Result")]
+    public TextMeshProUGUI resultScore;
+    public TextMeshProUGUI resultText1;
+    public TextMeshProUGUI resultText2;
+    //public GameObject ResultPanel;
+    public void OpenResult()
+    {
+        if (Score > 20)
+        {
+            resultScore.color = Color.blue;
+            resultText1.color = Color.blue;
+            resultText1.text = "양호";
+            resultText2.text = "아직은 치매 걱정이 없습니다.";
+        }
+        else if (Score > 16)
+        {
+            resultScore.color = new Color(1.0f, 0.48f, 0.0f);
+            resultText1.color = new Color(1.0f, 0.48f, 0.0f);
+            resultText1.text = "주의";
+            resultText2.text = "치매 발병에 주의하시고\n훈련을 하는 것을 권합니다.";
+        }
+        else
+        {
+            resultScore.color = Color.red;
+            resultText1.color = Color.red;
+            resultText1.text = "의심";
+            resultText2.text = "치매검사를 받아보시기를 권합니다.";
+        }
+
+        resultScore.text = (Score*4).ToString() +" / 100";
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[14], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+    }
+    public void CloseResult()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    #endregion
 }
+
+
+
 
 
 
