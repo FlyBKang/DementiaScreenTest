@@ -3,6 +3,9 @@ ScriptsOnlyBuild:
     Assembly-CSharp.dll:
     - JyroBall
     - JyroGoal
+    - LicalizationRefeat
+    - Localization
+    - LocalizationCtrl
     - PillarBoxCanvas
     - ScreenTestController
     DOTween.dll:
@@ -111,6 +114,12 @@ ScriptsOnlyBuild:
       Script: {instanceID: 15050}
     - Class: 114
       Script: {instanceID: 15252}
+    - Class: 114
+      Script: {instanceID: 183440}
+    - Class: 114
+      Script: {instanceID: 248122}
+    - Class: 114
+      Script: {instanceID: 389926}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -634,7 +643,7 @@ ScriptsOnlyBuild:
     className: TMP_TextSelector_B
   - hash:
       serializedVersion: 2
-      Hash: 0bf60cfb8e67b650391e44c0b910fe9b
+      Hash: 0df2714d01aa8e83a5a9d12283fe4a44
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ScreenTestController
@@ -860,7 +869,25 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
+  - hash:
+      serializedVersion: 2
+      Hash: 466bb9fd06c4200a4a40210074b4eca6
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Localization
+  - hash:
+      serializedVersion: 2
+      Hash: 123bca6d7103fb9720196f37f9dbb210
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: LicalizationRefeat
+  - hash:
+      serializedVersion: 2
+      Hash: 42d173f05ad45b914a31eb969b9c2708
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: LocalizationCtrl
   platform: 13
   scenePathNames:
   - Assets/ScreenTest/ScreeningTest.unity
-  playerPath: C:/Users/cdcd8/Documents/DementiaTest.apk
+  playerPath: C:/Users/cdcd8/Documents/DementiaTest3.apk

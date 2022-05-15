@@ -60,6 +60,9 @@
     <Compile Include="Assets\ScreenTest\GyroSensor.cs" />
     <Compile Include="Assets\ScreenTest\JyroBall.cs" />
     <Compile Include="Assets\ScreenTest\JyroGoal.cs" />
+    <Compile Include="Assets\ScreenTest\LicalizationRefeat.cs" />
+    <Compile Include="Assets\ScreenTest\Localization.cs" />
+    <Compile Include="Assets\ScreenTest\LocalizationCtrl.cs" />
     <Compile Include="Assets\ScreenTest\ScreenTestController.cs" />
     <Compile Include="Assets\ScreenTest\Util.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />

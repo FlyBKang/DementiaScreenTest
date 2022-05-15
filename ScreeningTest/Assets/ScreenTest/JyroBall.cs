@@ -9,17 +9,18 @@ public class JyroBall : MonoBehaviour
     Rigidbody2D rigi;
     public bool keyboard = false;
     public bool isPlaying = false;
+    Vector3 oriPos = new Vector3(-665, 275, 0);
     
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         rigi = GetComponent<Rigidbody2D>();
-
     }
+    /*
     private void OnDestroy()
     {
         Input.gyro.enabled = false;
-    }    
+    }    */
 
     // Update is called once per frame
     void Update()
@@ -53,7 +54,7 @@ public class JyroBall : MonoBehaviour
     {
         rigi = GetComponent<Rigidbody2D>();
         rigi.velocity = Vector3.zero;
-        this.transform.localPosition = Vector3.zero;
+        this.transform.localPosition = oriPos;
     }
 }
 
