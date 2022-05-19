@@ -7,6 +7,7 @@ using System.Diagnostics;
 using UnityEngine.SceneManagement;
 public class ScreenTestController : MonoBehaviour
 {
+    public int difficult = 0;
     public bool isKorean = true;
     public GameObject[] panelList;
     public PillarBoxCanvas PillarBox;
@@ -16,12 +17,15 @@ public class ScreenTestController : MonoBehaviour
     public GameObject successPanel;
     public GameObject failPanel;
     public float resultTime = 0.2f;
+    public GameObject levelPanel;
+    private int panelCnt = 1;
     private void Awake()
     {
         mySound = GetComponent<AudioSource>();
         foreach (GameObject g in panelList)
             g.SetActive(false);
         panelList[0].SetActive(true);
+        levelPanel.SetActive(false);
     }
     public void Exit()
     {
@@ -43,10 +47,11 @@ public class ScreenTestController : MonoBehaviour
     [Header("Birth")]
     public int year, month, day;
     public TextMeshProUGUI yearTMP, monthTMP, dayTMP;
-    public void StartBirthPanel()
+    public void StartBirthPanel(int n)
     {
+        difficult = n;
         BirthReset();
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[1], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void BirthReset()
     {
@@ -94,7 +99,7 @@ public class ScreenTestController : MonoBehaviour
     public void StartTodayPanel()
     {
         TodayReset();
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[2], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void TodayReset()
     {
@@ -253,17 +258,18 @@ public class ScreenTestController : MonoBehaviour
     #region 물건
     [Header("Stuff")]
     public GameObject[] stuffPicture;
-    public TextMeshProUGUI stuffExplain;
     public float stuffShowTime = 3.0f;
     public GameObject stuffStartBtn;
     public List<int> stuffimgArr;
     public GameObject stuffAnswerPanel;
-    public int[] stuffAnswer = new int[] { 0, 1, 2 };
+    public int[] stuffAnswer;
     public Transform stuffAnswerObj0, stuffAnswerObj1, stuffAnswerObj2;
+    public TextMeshProUGUI stuffOrderText1, stuffOrderText2, stuffOrderText3;
+
     public void StartStuffPanel()
     {
         StuffReset();
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[3], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void StuffReset()
     {
@@ -278,6 +284,52 @@ public class ScreenTestController : MonoBehaviour
         stuffAnswerPanel.SetActive(false);
         StuffImageChage(0);
         stuffStartBtn.SetActive(true);
+
+        if (isKorean)
+        {
+            if (0 == difficult)
+            {
+                stuffOrderText1.text = "2번째";
+                stuffOrderText2.text = "4번째";
+                stuffOrderText3.text = "6번째";
+
+            }
+            if (1 == difficult)
+            {
+                stuffOrderText1.text = "1번째";
+                stuffOrderText2.text = "3번째";
+                stuffOrderText3.text = "4번째";
+            }
+            if (2 == difficult)
+            {
+                stuffOrderText1.text = "1번째";
+                stuffOrderText2.text = "2번째";
+                stuffOrderText3.text = "3번째";
+            }
+        }
+        else
+        {
+
+            if (0 == difficult)
+            {
+                stuffOrderText1.text = "2nd";
+                stuffOrderText2.text = "4th";
+                stuffOrderText3.text = "6th";
+
+            }
+            if (1 == difficult)
+            {
+                stuffOrderText1.text = "1st";
+                stuffOrderText2.text = "3rd";
+                stuffOrderText3.text = "4th";
+            }
+            if (2 == difficult)
+            {
+                stuffOrderText1.text = "1st";
+                stuffOrderText2.text = "2nd";
+                stuffOrderText3.text = "3rd";
+            }
+        }
     }
     public void ShowImage()
     {
@@ -285,8 +337,15 @@ public class ScreenTestController : MonoBehaviour
         StartCoroutine(ShowIMG());
         IEnumerator ShowIMG()
         {
+            int level = 6;
+            if (0 == difficult)
+                level = 6;
+            if (1 == difficult)
+                level = 4;
+            if (2 == difficult)
+                level = 3;
             WaitForSeconds wfs = new WaitForSeconds(stuffShowTime);
-            for (int j = 0; j < 3; ++j)
+            for (int j = 0; j < level; ++j)
             {
                 for (int i = 0; i < 10; ++i)
                     stuffPicture[i].SetActive(false);
@@ -348,19 +407,54 @@ public class ScreenTestController : MonoBehaviour
     {
         bool check0, check1, check2, order;
         check0 = check1 = check2 = order = false;
-        for (int i = 0; i < 3; ++i)
+        if (difficult == 2)//0,1,2
         {
-            if (stuffAnswer[i] == stuffimgArr[0])
-                check0 = true;
-            if (stuffAnswer[i] == stuffimgArr[1])
-                check1 = true;
-            if (stuffAnswer[i] == stuffimgArr[2])
-                check2 = true;
+            for (int i = 0; i < 3; ++i)
+            {
+                if (stuffAnswer[i] == stuffimgArr[0])
+                    check0 = true;
+                if (stuffAnswer[i] == stuffimgArr[1])
+                    check1 = true;
+                if (stuffAnswer[i] == stuffimgArr[2])
+                    check2 = true;
+            }
+            if (stuffAnswer[0] == stuffimgArr[0])
+                if (stuffAnswer[1] == stuffimgArr[1])
+                    if (stuffAnswer[2] == stuffimgArr[2])
+                        order = true;
         }
-        if (stuffAnswer[0] == stuffimgArr[0])
-            if (stuffAnswer[1] == stuffimgArr[1])
-                if (stuffAnswer[2] == stuffimgArr[2])
-                    order = true;
+        if(difficult == 1)//0,2,3
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                if (stuffAnswer[i] == stuffimgArr[0])
+                    check0 = true;
+                if (stuffAnswer[i] == stuffimgArr[2])
+                    check1 = true;
+                if (stuffAnswer[i] == stuffimgArr[3])
+                    check2 = true;
+            }
+            if (stuffAnswer[0] == stuffimgArr[0])
+                if (stuffAnswer[1] == stuffimgArr[2])
+                    if (stuffAnswer[2] == stuffimgArr[3])
+                        order = true;
+        }
+        if (difficult == 0)//1,3,5
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                if (stuffAnswer[i] == stuffimgArr[1])
+                    check0 = true;
+                if (stuffAnswer[i] == stuffimgArr[3])
+                    check1 = true;
+                if (stuffAnswer[i] == stuffimgArr[5])
+                    check2 = true;
+            }
+            if (stuffAnswer[0] == stuffimgArr[1])
+                if (stuffAnswer[1] == stuffimgArr[3])
+                    if (stuffAnswer[2] == stuffimgArr[5])
+                        order = true;
+        }
         if (check0)
             Score++;
         if (check1)
@@ -388,19 +482,45 @@ public class ScreenTestController : MonoBehaviour
     public void StartCalcPanel()
     {
         CalcReset();
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[4], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void CalcReset()
     {
         calcNumber = 100;
-        calcAnswer1 = 90;
-        calcAnswer2 = 60;
-        calcAnswer3 = 70;
-        calcAnswer4 = 90;
-        random1 = Random.Range(5, 9);
-        random2 = Random.Range(26, 29);
-        random3 = Random.Range(5, 9);
-        random4 = Random.Range(26, 29);
+        if (difficult == 0)
+        {
+            calcAnswer1 = 90;
+            calcAnswer2 = 60;
+            calcAnswer3 = 70;
+            calcAnswer4 = 90;
+            random1 = Random.Range(5, 9);
+            random2 = Random.Range(26, 29);
+            random3 = Random.Range(5, 9);
+            random4 = Random.Range(26, 29);
+        }
+        if(difficult == 1)
+        {
+            calcAnswer1 = 90;
+            calcAnswer2 = 70;
+            calcAnswer3 = 80;
+            calcAnswer4 = 90;
+            random1 = Random.Range(5, 9);
+            random2 = Random.Range(16, 19);
+            random3 = Random.Range(5, 9);
+            random4 = Random.Range(16, 19);
+        }
+        if(difficult == 2)
+        {
+            calcAnswer1 = 90;
+            calcAnswer2 = 90;
+            calcAnswer3 = 90;
+            calcAnswer4 = 90;
+            random1 = Random.Range(5, 9);
+            random2 = Random.Range(6, 9);
+            random3 = Random.Range(5, 9);
+            random4 = Random.Range(6, 9);
+        }
+
         for (int i = 0; i < calcQuestion.Length; ++i)
             calcQuestion[i].SetActive(false);
         CalcSetting1();
@@ -524,7 +644,7 @@ public class ScreenTestController : MonoBehaviour
     public void CubeStart()
     {
         CubeReset();
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[5], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void CubeSelectCube(int num)
     {
@@ -575,13 +695,17 @@ public class ScreenTestController : MonoBehaviour
     public int shape1QuestNum = 0;
     public int shape1SelectNum = -1;
     List<int> shape1Order;
+    private int shape1SoundCnt = 0;
+    public Button shape1PlatBtn;
     public void Shape1Start()
     {
         Shape1Reset();
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[6], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void Shape1Reset()
     {
+        shape1PlatBtn.interactable = true;
+        shape1SoundCnt = 0;
         shape1QuestNum = 0;
         shape1Order = new List<int>();
         for (int i = 0; i < 6; ++i)
@@ -593,8 +717,20 @@ public class ScreenTestController : MonoBehaviour
     }
     public void Shape1SoundPlay()
     {
-        mySound.clip = shape1Audio[shape1Order[shape1QuestNum]];
-        mySound.Play();
+            shape1SoundCnt++;
+            mySound.clip = shape1Audio[shape1Order[shape1QuestNum]];
+            mySound.Play();
+
+        if (difficult == 0)
+        {
+            if (shape1SoundCnt > 0)
+                shape1PlatBtn.interactable = false;
+        }
+        else
+        {
+            if (shape1SoundCnt > 1)
+                shape1PlatBtn.interactable = false;
+        }
     }
     public void Shape1NextLevel()
     {
@@ -633,13 +769,17 @@ public class ScreenTestController : MonoBehaviour
     public int shape2QuestNum = 0;
     public int shape2SelectNum = -1;
     List<int> shape2Order;
+    private int shape2SoundCnt = 0;
+    public Button shape2PlatBtn;
     public void Shape2Start()
     {
         Shape2Reset();
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[7], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void Shape2Reset()
     {
+        shape2PlatBtn.interactable = true;
+        shape2SoundCnt = 0;
         shape2QuestNum = 0;
         shape2Order = new List<int>();
         for (int i = 0; i < 6; ++i)
@@ -651,8 +791,20 @@ public class ScreenTestController : MonoBehaviour
     }
     public void Shape2SoundPlay()
     {
+        shape2SoundCnt++;
         mySound.clip = shape2Audio[shape2Order[shape2QuestNum]];
         mySound.Play();
+
+        if (difficult == 0)
+        {
+            if (shape2SoundCnt > 0)
+                shape2PlatBtn.interactable = false;
+        }
+        else
+        {
+            if (shape2SoundCnt > 1)
+                shape2PlatBtn.interactable = false;
+        }
     }
     public void Shape2NextLevel()
     {
@@ -667,7 +819,9 @@ public class ScreenTestController : MonoBehaviour
         }
         shape2QuestNum++;
         if (shape2QuestNum == 1)
-            SentenceStart();
+        {
+            StartStuff2Panel();
+        }
         Shape2SelectBtn(-1);
     }
     public void Shape2SelectBtn(int num)
@@ -685,6 +839,221 @@ public class ScreenTestController : MonoBehaviour
     }
     #endregion
 
+
+    #region 물건2
+    [Header("Stuff2")]
+    public GameObject[] stuff2Picture;    
+    //public float stuff2ShowTime = 3.0f;
+    public GameObject stuff2StartBtn;
+    public List<int> stuff2imgArr;
+    public GameObject stuff2AnswerPanel;
+    public int[] stuff2Answer;
+    public Transform stuff2AnswerObj0, stuff2AnswerObj1, stuff2AnswerObj2;
+    public TextMeshProUGUI stuff2OrderText1, stuff2OrderText2, stuff2OrderText3;
+
+    public void StartStuff2Panel()
+    {
+        Stuff2Reset();
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+    }
+    public void Stuff2Reset()
+    {
+        stuff2imgArr = new List<int>();
+        for (int i = 0; i < 10; ++i)
+        {
+            stuff2imgArr.Add(i);
+            stuff2Picture[i].SetActive(false);
+        }
+        Util.ShuffleList(stuff2imgArr);
+        stuff2Answer = new int[] { 0, 1, 2 };
+        stuff2AnswerPanel.SetActive(false);
+        Stuff2ImageChage(0);
+        stuff2StartBtn.SetActive(true);
+
+        if (isKorean)
+        {
+            if (0 == difficult)
+            {
+                stuff2OrderText1.text = "2번째";
+                stuff2OrderText2.text = "4번째";
+                stuff2OrderText3.text = "6번째";
+
+            }
+            if (1 == difficult)
+            {
+                stuff2OrderText1.text = "1번째";
+                stuff2OrderText2.text = "3번째";
+                stuff2OrderText3.text = "4번째";
+            }
+            if (2 == difficult)
+            {
+                stuff2OrderText1.text = "1번째";
+                stuff2OrderText2.text = "2번째";
+                stuff2OrderText3.text = "3번째";
+            }
+        }
+        else
+        {
+
+            if (0 == difficult)
+            {
+                stuff2OrderText1.text = "1st";
+                stuff2OrderText2.text = "3rd";
+                stuff2OrderText3.text = "6th";
+
+            }
+            if (1 == difficult)
+            {
+                stuff2OrderText1.text = "1st";
+                stuff2OrderText2.text = "2nd";
+                stuff2OrderText3.text = "4th";
+            }
+            if (2 == difficult)
+            {
+                stuff2OrderText1.text = "1st";
+                stuff2OrderText2.text = "2nd";
+                stuff2OrderText3.text = "3rd";
+            }
+        }
+    }
+    public void ShowImage2()
+    {
+        stuff2StartBtn.SetActive(false);
+        StartCoroutine(ShowIMG());
+        IEnumerator ShowIMG()
+        {
+            int level = 6;
+            if (0 == difficult)
+                level = 6;
+            if (1 == difficult)
+                level = 4;
+            if (2 == difficult)
+                level = 3;
+            WaitForSeconds wfs = new WaitForSeconds(stuffShowTime);
+            for (int j = 0; j < level; ++j)
+            {
+                for (int i = 0; i < 10; ++i)
+                    stuff2Picture[i].SetActive(false);
+                stuff2Picture[stuff2imgArr[j]].SetActive(true);
+
+                yield return wfs;
+            }
+            stuff2AnswerPanel.SetActive(true);
+        }
+    }
+    public void Stuff2ImageChage(int n) //{1,2,3,-1,-2,-3}
+    {
+        switch (n)
+        {
+            case 1:
+                stuff2Answer[0]++;
+                if (stuff2Answer[0] > 9)
+                    stuff2Answer[0] = 0;
+                break;
+            case -1:
+                stuff2Answer[0]--;
+                if (stuff2Answer[0] < 0)
+                    stuff2Answer[0] = 9;
+                break;
+            case 2:
+                stuff2Answer[1]++;
+                if (stuff2Answer[1] > 9)
+                    stuff2Answer[1] = 0;
+                break;
+            case -2:
+                stuff2Answer[1]--;
+                if (stuff2Answer[1] < 0)
+                    stuff2Answer[1] = 9;
+                break;
+            case 3:
+                stuff2Answer[2]++;
+                if (stuff2Answer[2] > 9)
+                    stuff2Answer[2] = 0;
+                break;
+            case -3:
+                stuff2Answer[2]--;
+                if (stuff2Answer[2] < 0)
+                    stuff2Answer[2] = 9;
+                break;
+            default:
+                break;
+        }
+        for (int i = 0; i < stuff2AnswerObj0.childCount; ++i)
+        {
+            stuff2AnswerObj0.GetChild(i).gameObject.SetActive(false);
+            stuff2AnswerObj1.GetChild(i).gameObject.SetActive(false);
+            stuff2AnswerObj2.GetChild(i).gameObject.SetActive(false);
+        }
+        stuff2AnswerObj0.GetChild(stuff2Answer[0]).gameObject.SetActive(true);
+        stuff2AnswerObj1.GetChild(stuff2Answer[1]).gameObject.SetActive(true);
+        stuff2AnswerObj2.GetChild(stuff2Answer[2]).gameObject.SetActive(true);
+    }
+    public void Stuff2Check()
+    {
+        bool check0, check1, check2, order;
+        check0 = check1 = check2 = order = false;
+        if (difficult == 2)//0,1,2
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                if (stuff2Answer[i] == stuff2imgArr[0])
+                    check0 = true;
+                if (stuff2Answer[i] == stuff2imgArr[1])
+                    check1 = true;
+                if (stuff2Answer[i] == stuff2imgArr[2])
+                    check2 = true;
+            }
+            if (stuff2Answer[0] == stuff2imgArr[0])
+                if (stuff2Answer[1] == stuff2imgArr[1])
+                    if (stuff2Answer[2] == stuff2imgArr[2])
+                        order = true;
+        }
+        if (difficult == 1)//0,1,3
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                if (stuff2Answer[i] == stuff2imgArr[0])
+                    check0 = true;
+                if (stuff2Answer[i] == stuff2imgArr[1])
+                    check1 = true;
+                if (stuff2Answer[i] == stuff2imgArr[3])
+                    check2 = true;
+            }
+            if (stuff2Answer[0] == stuff2imgArr[0])
+                if (stuff2Answer[1] == stuff2imgArr[1])
+                    if (stuff2Answer[2] == stuff2imgArr[3])
+                        order = true;
+        }
+        if (difficult == 0)//0,2,5
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                if (stuff2Answer[i] == stuff2imgArr[0])
+                    check0 = true;
+                if (stuff2Answer[i] == stuff2imgArr[2])
+                    check1 = true;
+                if (stuff2Answer[i] == stuff2imgArr[5])
+                    check2 = true;
+            }
+            if (stuff2Answer[0] == stuff2imgArr[0])
+                if (stuff2Answer[1] == stuff2imgArr[2])
+                    if (stuff2Answer[2] == stuff2imgArr[5])
+                        order = true;
+        }
+        if (check0)
+            Score++;
+        if (check1)
+            Score++;
+        if (check2)
+            Score++;
+        if (order)
+            Score++;
+        SentenceStart();
+    }
+
+    #endregion
+
+
     #region 문장
     [Header("Sentence")]
     public Transform[] sentenceQuestion;
@@ -692,14 +1061,20 @@ public class ScreenTestController : MonoBehaviour
     private List<int> sentenceOrder;
     private int sentenceAnswer = 0;
     private int sentenceNum = 0;
+    public Button sentenceSoundBtn1, sentenceSoundBtn2;
+    private int sentenceSoundCnt1, sentenceSoundCnt2;
+    public AudioClip[] sentenceSound1, sentenceSound2;
 
     public void SentenceStart()
     {
         SentenceReset();
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[8], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void SentenceReset()
     {
+        sentenceSoundCnt1 = sentenceSoundCnt2 = 0;
+        sentenceSoundBtn1.interactable = true;
+        sentenceSoundBtn2.interactable = true;
         sentenceOrder = new List<int>();
         for (int i = 0; i < 3; ++i)
         {
@@ -708,32 +1083,49 @@ public class ScreenTestController : MonoBehaviour
         sentenceAnswer = 0;
         sentenceNum = 0;
         SentenceQuestOn();
-        SentenceSelect(0);
+        SentenceSelectOri(0);
+        SentenceSelectNew(-1);
     }
     public void SentenceQuestOn()
     {
         for (int i = 0; i < sentenceQuestion.Length; ++i)
         {
-            sentenceQuestion[i].parent.gameObject.SetActive(false);
-            for (int j = 0; j < 6; ++j)
-                sentenceQuestion[i].GetChild(j).gameObject.SetActive(false);
+            sentenceQuestion[i].gameObject.SetActive(false);
         }
-        sentenceQuestion[sentenceNum].parent.gameObject.SetActive(true);
-        sentenceQuestion[sentenceNum].GetChild(sentenceOrder[sentenceNum]).gameObject.SetActive(true);
+        sentenceQuestion[sentenceNum].gameObject.SetActive(true);
+         if (sentenceNum > 1)
+        {
+            sentenceAnswer = 0;
+            SentenceSelectOri(0);
+            sentenceQuestion[sentenceNum].GetChild(0).GetChild(0).GetChild(sentenceOrder[sentenceNum]).gameObject.SetActive(true);
+        }
     }
-    public void SentenceSelect(int num)
+    public void SentenceSelectOri(int num)
     {
         sentenceAnswer += num;
-        if (sentenceAnswer < 0)
-            sentenceAnswer = 5;
         if (sentenceAnswer > 5)
             sentenceAnswer = 0;
+        if (sentenceAnswer < 0)
+            sentenceAnswer = 5;
+
         for (int i = 0; i < sentenceSelect.Length; ++i)
         {
             for (int j = 0; j < 6; ++j)
                 sentenceSelect[i].GetChild(j).gameObject.SetActive(false);
 
             sentenceSelect[i].GetChild(sentenceAnswer).gameObject.SetActive(true);
+        }
+    }
+    public void SentenceSelectNew(int num)
+    {
+        sentenceAnswer = num;        
+        for (int i = 0; i < sentenceSelect.Length; ++i)
+        {
+            for (int j = 0; j < 6; ++j)
+                sentenceSelect[i].GetChild(j).gameObject.SetActive(false);
+
+            if (sentenceAnswer != -1)
+                sentenceSelect[i].GetChild(sentenceAnswer).gameObject.SetActive(true);
         }
     }
     public void SentenceNextLevel()
@@ -754,8 +1146,44 @@ public class ScreenTestController : MonoBehaviour
             return;
         }
         sentenceAnswer = 0;
-        SentenceSelect(0);
+        SentenceSelectOri(0);
+        SentenceSelectNew(-1);
         SentenceQuestOn();
+    }
+    public void SentencePlaySound(int num)
+    {
+        if(num == 0)
+        {
+            mySound.clip = sentenceSound1[sentenceOrder[sentenceNum]];
+            mySound.Play();
+            sentenceSoundCnt1++;
+            if (difficult == 0)
+            {
+                if (sentenceSoundCnt1 > 0)
+                    sentenceSoundBtn1.interactable = false;
+            }
+            else
+            {
+                if (sentenceSoundCnt1 > 1)
+                    sentenceSoundBtn1.interactable = false;
+            }
+        }
+        if(num == 1)
+        {
+            mySound.clip = sentenceSound2[sentenceOrder[sentenceNum]];
+            mySound.Play();
+            sentenceSoundCnt2++;
+            if (difficult == 0)
+            {
+                if (sentenceSoundCnt2 > 0)
+                    sentenceSoundBtn2.interactable = false;
+            }
+            else
+            {
+                if (sentenceSoundCnt2 > 1)
+                    sentenceSoundBtn2.interactable = false;
+            }
+        }
     }
 
     #endregion
@@ -773,7 +1201,7 @@ public class ScreenTestController : MonoBehaviour
     public void PatternStart()
     {
         PatternReset();
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[9], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void PatternReset()
     {
@@ -792,7 +1220,12 @@ public class ScreenTestController : MonoBehaviour
         {
             for (int j = 0; j < patternQuestion[i].childCount; ++j)
                 patternQuestion[i].GetChild(j).gameObject.SetActive(false);
-            patternQuestion[i].GetChild(patternOrder[patternLevel]).gameObject.SetActive(true);
+            if(difficult == 0)
+                patternQuestion[i].GetChild(patternOrder[patternLevel]).gameObject.SetActive(true);
+            else if(difficult == 1)
+                patternQuestion[i].GetChild(patternOrder[patternLevel]+4).gameObject.SetActive(true);
+            else
+                patternQuestion[i].GetChild(patternOrder[patternLevel] + 8).gameObject.SetActive(true);
         }
     }
     public void PatternMoveNum(int num)
@@ -821,51 +1254,97 @@ public class ScreenTestController : MonoBehaviour
         int tempScore = Score;
         if (patternLevel == 0)
         {
-            switch (patternOrder[patternLevel])
+            if (difficult == 0)
             {
-                case 0:
-                    if (patternNum == 24)
-                        Score++;
-                    break;
-                case 1:
-                    if (patternNum == 17)
-                        Score++;
-                    break;
-                case 2:
-                    if (patternNum == 32)
-                        Score++;
-                    break;
-                case 3:
-                    if (patternNum == 40)
-                        Score++;
-                    break;
+                switch (patternOrder[patternLevel])
+                {
+                    case 0:
+                        if (patternNum == 18)
+                            Score++;
+                        break;
+                    case 1:
+                        if (patternNum == 12)
+                            Score++;
+                        break;
+                    case 2:
+                        if (patternNum == 34)
+                            Score++;
+                        break;
+                    case 3:
+                        if (patternNum == 14)
+                            Score++;
+                        break;
+                }
+            }
+            if(difficult == 1 || difficult == 2)
+            { 
+                switch (patternOrder[patternLevel])
+                {
+                    case 0:
+                        if (patternNum == 24)
+                            Score++;
+                        break;
+                    case 1:
+                        if (patternNum == 17)
+                            Score++;
+                        break;
+                    case 2:
+                        if (patternNum == 32)
+                            Score++;
+                        break;
+                    case 3:
+                        if (patternNum == 40)
+                            Score++;
+                        break;
+                }
             }
         }
         if (patternLevel == 1)
         {
-            switch (patternOrder[patternLevel])
+            if (difficult == 0)
             {
-                case 0:
-                    if (patternNum == 13)
-                        Score++;
-                    break;
-                case 1:
-                    if (patternNum == 9)
-                        Score++;
-                    break;
-                case 2:
-                    if (patternNum == 12)
-                        Score++;
-                    break;
-                case 3:
-                    if (patternNum == 15)
-                        Score++;
-                    break;
+                switch (patternOrder[patternLevel])
+                {
+                    case 0:
+                        if (patternNum == 92)
+                            Score++;
+                        break;
+                    case 1:
+                        if (patternNum == 27)
+                            Score++;
+                        break;
+                    case 2:
+                        if (patternNum == 77)
+                            Score++;
+                        break;
+                    case 3:
+                        if (patternNum == 23)
+                            Score++;
+                        break;
+                }
             }
-            if (tempScore == Score)
-                StartCoroutine(Fail());
             else
-                StartCoroutine(Success());
+            {
+                switch (patternOrder[patternLevel])
+                {
+                    case 0:
+                        if (patternNum == 13)
+                            Score++;
+                        break;
+                    case 1:
+                        if (patternNum == 9)
+                            Score++;
+                        break;
+                    case 2:
+                        if (patternNum == 12)
+                            Score++;
+                        break;
+                    case 3:
+                        if (patternNum == 15)
+                            Score++;
+                        break;
+                }
+            }
         }
         if (patternLevel == 2)
         /*빨원         0
@@ -879,32 +1358,64 @@ public class ScreenTestController : MonoBehaviour
          * 노세모     8
         */
         {
-            switch (patternOrder[patternLevel])
+            if (difficult != 2)
             {
-                case 0:
-                    if (patternNum == 4)
-                        Score++;
-                    break;
-                case 1:
-                    if (patternNum == 2)
-                        Score++;
-                    break;
-                case 2:
-                    if (patternNum == 4)
-                        Score++;
-                    break;
-                case 3:
-                    if (patternNum == 2)
-                        Score++;
-                    break;
+                switch (patternOrder[patternLevel])
+                {
+
+                    case 0:
+                        if (patternNum == 4)
+                            Score++;
+                        break;
+                    case 1:
+                        if (patternNum == 2)
+                            Score++;
+                        break;
+                    case 2:
+                        if (patternNum == 4)
+                            Score++;
+                        break;
+                    case 3:
+                        if (patternNum == 2)
+                            Score++;
+                        break;
+                }
+            }
+            else
+            {
+                switch (patternOrder[patternLevel])
+                {
+
+                    case 0:
+                        if (patternNum == 2)
+                            Score++;
+                        break;
+                    case 1:
+                        if (patternNum == 4)
+                            Score++;
+                        break;
+                    case 2:
+                        if (patternNum == 2)
+                            Score++;
+                        break;
+                    case 3:
+                        if (patternNum == 3)
+                            Score++;
+                        break;
+                }
             }
         }
+
+        if (tempScore == Score)
+            StartCoroutine(Fail());
+        else
+            StartCoroutine(Success());
 
         patternLevel++;
         if (patternLevel == 3)
         {
             StroopInit();
-            StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[10], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+            StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
             return;
         }
 
@@ -918,6 +1429,7 @@ public class ScreenTestController : MonoBehaviour
             patternNum = 20;
             PatternMoveNum(0);
         }
+
         for (int i = 0; i < patternPanel.Length; ++i)
             patternPanel[i].SetActive(false);
         patternPanel[patternLevel].SetActive(true);
@@ -925,7 +1437,13 @@ public class ScreenTestController : MonoBehaviour
         {
             for (int j = 0; j < patternQuestion[i].childCount; ++j)
                 patternQuestion[i].GetChild(j).gameObject.SetActive(false);
-            patternQuestion[i].GetChild(patternOrder[patternLevel]).gameObject.SetActive(true);
+
+            if (difficult == 0)
+                patternQuestion[i].GetChild(patternOrder[patternLevel]).gameObject.SetActive(true);
+            else if (difficult == 1)
+                patternQuestion[i].GetChild(patternOrder[patternLevel] + 4).gameObject.SetActive(true);
+            else
+                patternQuestion[i].GetChild(patternOrder[patternLevel] + 8).gameObject.SetActive(true);
         }
     }
 
@@ -1072,11 +1590,32 @@ public class ScreenTestController : MonoBehaviour
                 yield return clickBlock;
                 stroopButtonL.interactable = true;
                 stroopButtonR.interactable = true;
-                for (int i = 0; i < 50 - cnt; ++i)
+                if (difficult == 0)
                 {
-                    if (stroopSelect != 0)
-                        break;
-                    yield return new WaitForSeconds(0.05f);
+                    for (int i = 0; i < 50 - cnt; ++i)
+                    {
+                        if (stroopSelect != 0)
+                            break;
+                        yield return new WaitForSeconds(0.05f);
+                    }
+                }
+                else if (difficult == 1)
+                {
+                    for (int i = 0; i < 60 - cnt; ++i)
+                    {
+                        if (stroopSelect != 0)
+                            break;
+                        yield return new WaitForSeconds(0.05f);
+                    }
+                }
+                else if (difficult == 2)
+                {
+                    for (int i = 0; i < 70 - cnt; ++i)
+                    {
+                        if (stroopSelect != 0)
+                            break;
+                        yield return new WaitForSeconds(0.05f);
+                    }
                 }
                 stroopButtonL.interactable = false;
                 stroopButtonR.interactable = false;
@@ -1137,7 +1676,7 @@ public class ScreenTestController : MonoBehaviour
     {
         witStartPanel.SetActive(true);
         witGamePanel.SetActive(false);
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[11], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void WitStart()
     {
@@ -1187,7 +1726,7 @@ public class ScreenTestController : MonoBehaviour
         IEnumerator WitBallMove()//-650,650,150,-350
         {
             WaitForSeconds witTime = new WaitForSeconds(0.03f);
-            int tempWitTime = 60 - ((witCnt+1)*4);
+            int tempWitTime = 40 + ((difficult) * 10)  - ((witCnt+1)*4);
 
             Vector3 randomPos = WitPosR[Random.Range(0, 5)];
             Vector3 tempDir = (randomPos - witOriPos) / tempWitTime;
@@ -1202,8 +1741,8 @@ public class ScreenTestController : MonoBehaviour
                 {
                     cnt2++;
                     cnt2 = cnt2 % 2;
-                    tempWitTime = 60 - ((witCnt + 1) * 4);
-                    if(cnt2 == 0)
+                    tempWitTime = 40 + ((difficult) * 10) - ((witCnt + 1) * 4);
+                    if (cnt2 == 0)
                         randomPos = WitPosR[Random.Range(0, 5)];
                     else
                         randomPos = WitPosL[Random.Range(0, 5)];
@@ -1285,7 +1824,7 @@ public class ScreenTestController : MonoBehaviour
         jyroGamePanel.SetActive(false);
         JyroHolderOn(true);
         jyroBall.isPlaying = false;
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[12], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void JyroReset()
     {
@@ -1346,13 +1885,18 @@ public class ScreenTestController : MonoBehaviour
     public GameObject[] pianoSelectImage;
     public GameObject pianoResult;
     public TextMeshProUGUI pianoResultText;
+    private int pianoHint1, pianoHint2;
+    public Button pianoPlayBtn1, pianoPlayBtn2;
     public void PianoStart()
     {
         PianoReset();
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[13], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void PianoReset()
     {
+        pianoHint1 = pianoHint2 = 0;
+        pianoPlayBtn1.interactable = true;
+        pianoPlayBtn2.interactable = true;
         pianoResult.SetActive(false);
         pianoCnt = 0;
         pianoScore = 0;
@@ -1396,12 +1940,22 @@ public class ScreenTestController : MonoBehaviour
     }
     public void PianoPlayFirst()
     {
+        pianoHint1++;        
+        if (pianoHint1 > difficult)
+        {
+            pianoPlayBtn1.interactable = false;
+        }
         mySound.clip = pianoSound[pianoOrder[pianoCnt]];
         mySound.volume = 0.7f;
         mySound.Play();
     }
     public void PianoPlayQuest()
     {
+        pianoHint2++;
+        if (pianoHint2 > 0)
+        {
+            pianoPlayBtn2.interactable = false;
+        }
         if (pianoCnt < 2)
         {
             if (pianoUpdown[pianoCnt] == 0)
@@ -1435,6 +1989,9 @@ public class ScreenTestController : MonoBehaviour
     }
     public void PianoCheck()
     {
+        pianoHint1 = pianoHint2 = 0;
+        pianoPlayBtn1.interactable = true;
+        pianoPlayBtn2.interactable = true;
         if (pianoUpdown[pianoCnt] == pianoSelect)
         {
             StartCoroutine(Success());
@@ -1511,8 +2068,8 @@ public class ScreenTestController : MonoBehaviour
             }
         }
 
-        resultScore.text = (Score).ToString() +" / 21";
-        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[14], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
+        resultScore.text = (Score).ToString() +" / 25";
+        StartCoroutine(PillarBox.PanelAnimationCoroutine(panelList[panelCnt++], PillarBox.PanelBottomPosition, PillarBox.PanelCenterPosition));
     }
     public void CloseResult()
     {

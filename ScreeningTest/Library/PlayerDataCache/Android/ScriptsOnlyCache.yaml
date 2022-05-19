@@ -89,37 +89,37 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11946}
     - Class: 114
-      Script: {instanceID: 12600}
+      Script: {instanceID: 12460}
     - Class: 114
-      Script: {instanceID: 12672}
+      Script: {instanceID: 12602}
     - Class: 114
-      Script: {instanceID: 13314}
+      Script: {instanceID: 12674}
     - Class: 114
-      Script: {instanceID: 13508}
+      Script: {instanceID: 13316}
     - Class: 114
-      Script: {instanceID: 13960}
+      Script: {instanceID: 13510}
     - Class: 114
-      Script: {instanceID: 13984}
+      Script: {instanceID: 13854}
     - Class: 114
-      Script: {instanceID: 14060}
+      Script: {instanceID: 13964}
     - Class: 114
-      Script: {instanceID: 14306}
+      Script: {instanceID: 13988}
     - Class: 114
-      Script: {instanceID: 14354}
+      Script: {instanceID: 14064}
     - Class: 114
-      Script: {instanceID: 14482}
+      Script: {instanceID: 14184}
     - Class: 114
-      Script: {instanceID: 14836}
+      Script: {instanceID: 14312}
     - Class: 114
-      Script: {instanceID: 15050}
+      Script: {instanceID: 14360}
     - Class: 114
-      Script: {instanceID: 15252}
+      Script: {instanceID: 14488}
     - Class: 114
-      Script: {instanceID: 183440}
+      Script: {instanceID: 14842}
     - Class: 114
-      Script: {instanceID: 248122}
+      Script: {instanceID: 15056}
     - Class: 114
-      Script: {instanceID: 389926}
+      Script: {instanceID: 15258}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -355,6 +355,12 @@ ScriptsOnlyBuild:
     className: Shadow
   - hash:
       serializedVersion: 2
+      Hash: 123bca6d7103fb9720196f37f9dbb210
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: LicalizationRefeat
+  - hash:
+      serializedVersion: 2
       Hash: 6663435805926faf16934aed992cd26b
     assemblyName: Assembly-CSharp.dll
     namespaceName: TMPro.Examples
@@ -517,6 +523,12 @@ ScriptsOnlyBuild:
     className: VerticalLayoutGroup
   - hash:
       serializedVersion: 2
+      Hash: 42d173f05ad45b914a31eb969b9c2708
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: LocalizationCtrl
+  - hash:
+      serializedVersion: 2
       Hash: 11319334e5365797f8056694f9b5dae4
     assemblyName: Assembly-CSharp.dll
     namespaceName: TMPro.Examples
@@ -625,6 +637,12 @@ ScriptsOnlyBuild:
     className: SimpleScript
   - hash:
       serializedVersion: 2
+      Hash: 466bb9fd06c4200a4a40210074b4eca6
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Localization
+  - hash:
+      serializedVersion: 2
       Hash: b6514f552bd2ee9e736a5678aa7f7de3
     assemblyName: Assembly-CSharp.dll
     namespaceName: TMPro.Examples
@@ -643,7 +661,7 @@ ScriptsOnlyBuild:
     className: TMP_TextSelector_B
   - hash:
       serializedVersion: 2
-      Hash: 0df2714d01aa8e83a5a9d12283fe4a44
+      Hash: 6fb6cc14302b8b38f4b249ca74820c23
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ScreenTestController
@@ -869,25 +887,7 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
-  - hash:
-      serializedVersion: 2
-      Hash: 466bb9fd06c4200a4a40210074b4eca6
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: Localization
-  - hash:
-      serializedVersion: 2
-      Hash: 123bca6d7103fb9720196f37f9dbb210
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: LicalizationRefeat
-  - hash:
-      serializedVersion: 2
-      Hash: 42d173f05ad45b914a31eb969b9c2708
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: LocalizationCtrl
   platform: 13
   scenePathNames:
   - Assets/ScreenTest/ScreeningTest.unity
-  playerPath: C:/Users/cdcd8/Documents/DementiaTest3.apk
+  playerPath: C:/Users/cdcd8/Documents/DementiaTest4.apk
